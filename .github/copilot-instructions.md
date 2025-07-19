@@ -19,7 +19,7 @@ This is a VS Code extension that displays synchronized lyrics for currently play
 
 ## Stack
 
-- Webviews UI: Svelte, SASS
+- Webviews UI: Svelte, CSS
 - APIs: Spotify Web API, LRCLib API
 - Authentication: OAuth 2.0, store tokens in VS Code secrets
 - State: VSCode global state

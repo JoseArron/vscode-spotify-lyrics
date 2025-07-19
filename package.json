@@ -21,7 +21,27 @@
         "command": "spotify-lyrics.test",
         "title": "Test Spotify Lyrics"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "spotify-lyrics",
+          "title": "Spotify Lyrics",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "spotify-lyrics": [
+        {
+          "type": "webview",
+          "id": "spotify-lyrics.view",
+          "name": "Now Playing",
+          "icon": "images/icon.svg",
+          "visibility": "visible"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

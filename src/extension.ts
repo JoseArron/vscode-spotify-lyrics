@@ -1,15 +1,19 @@
 import * as vscode from "vscode";
 
-export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand(
-    "spotify-lyrics.test",
-    () => {
-      console.log("Hello world");
-    }
-  );
+import { registerLyricsWebview } from "./webviews/lyrics";
 
-  context.subscriptions.push(disposable);
+const test = (context: vscode.ExtensionContext) => {
+  context.subscriptions.push(
+    vscode.commands.registerCommand("spotify-lyrics.test", () => {
+      vscode.window.showInformationMessage("this is spotify lyrics test");
+    })
+  );
+};
+
+export function activate(context: vscode.ExtensionContext) {
+  test(context);
+
+  registerLyricsWebview(context);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
