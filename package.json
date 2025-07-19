@@ -19,7 +19,7 @@
     "commands": [
       {
         "command": "spotify-lyrics.test",
-        "title": "Hello world"
+        "title": "Test Spotify Lyrics"
       }
     ]
   },
