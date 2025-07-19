@@ -6,16 +6,20 @@
   "engines": {
     "vscode": "^1.102.0"
   },
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
   "categories": [
     "Other"
   ],
   "activationEvents": [],
-  "main": "./dist/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "spotify-lyrics.helloWorld",
-        "title": "Hello World"
+        "command": "spotify-lyrics.test",
+        "title": "Hello world"
       }
     ]
   },

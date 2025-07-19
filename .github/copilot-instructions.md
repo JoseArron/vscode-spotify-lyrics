@@ -6,11 +6,30 @@ This is a VS Code extension that displays synchronized lyrics for currently play
 
 ## Key Architecture Components
 
+## Planned Features
+
+- Handle OAuth 2.0 authentication with Spotify
+- Display lyrics in Explorer webview
+- Sync lyrics with the currently playing track
+
+## Nice to Haves
+
+- Playback controls for the current track
+- Seek to lyrics position
+
+## Stack
+
+- Webviews UI: Svelte, SASS
+- APIs: Spotify Web API, LRCLib API
+- Authentication: OAuth 2.0, store tokens in VS Code secrets
+- State: VSCode global state
+
 ### Extension Structure
 
 - **Main entry**: `src/extension.ts` - Extension activation/deactivation lifecycle
 - **Command registration**: Commands defined in `package.json` contributes section must match `vscode.commands.registerCommand()` calls
-- **Current command mismatch**: `package.json` defines `spotify-lyrics.playLyrics` but code registers `spotify-lyrics.helloWorld`
+- **Webviews**: `src/webview` - Contains Svelte components for the lyrics display
+- **Components**: `src/components` - Reusable components
 
 ### Build System & Development Workflow
 
@@ -43,14 +62,14 @@ Based on the technical spec, implement these modules:
 - **Webview Panel**: Sidebar integration with Svelte frontend
 - **State Management**: Track current song, lyrics sync, auth status
 
-### Polling Strategy (Key Technical Requirement)
+### Polling
 
 - Poll Spotify's `currently-playing` endpoint every 15 seconds
 - Compare `track.id` to detect song changes
 - Use `progress_ms` for lyrics synchronization
 - Pause polling when not playing or VS Code unfocused
 
-### Error Handling Priorities
+### Error Handling
 
 1. Network failures → Clear webview error messages
 2. API unavailability → Graceful degradation
@@ -64,10 +83,3 @@ Based on the technical spec, implement these modules:
 - `npm run lint` - ESLint validation
 - `npm test` - Run extension tests
 - Use VS Code tasks for background building during development
-
-## Critical Notes
-
-- **Command ID mismatch**: Update either package.json command or extension.ts registration
-- **Webview theming**: Must adapt to VS Code themes (light/dark/high-contrast)
-- **Rate limiting**: Stay within Spotify's 100 requests/minute limit
-- **Extension activation**: Currently on any command execution (activationEvents: [])
