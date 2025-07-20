@@ -1,7 +1,7 @@
 import { mount } from "svelte";
-import Lyrics from "./components/lyrics.svelte";
+import App from "./components/app.svelte";
 
-const app = mount(Lyrics, {
+const app = mount(App, {
   target: document.getElementById("app")!,
 });
 

@@ -1,53 +1,88 @@
 import * as vscode from "vscode";
 import { getNonce } from "../utils/nonce";
+import { AuthService } from "../services/auth";
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
-  const provider = new SpotifyLyricsWebview(context.extensionUri);
+  const provider = new LyricsWebviewProvider(context);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      SpotifyLyricsWebview.viewType,
+      LyricsWebviewProvider.viewType,
       provider
     )
   );
 };
 
-class SpotifyLyricsWebview implements vscode.WebviewViewProvider {
+class LyricsWebviewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "spotify-lyrics.view";
 
   private _view?: vscode.WebviewView;
+  private _authService: AuthService;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _context: vscode.ExtensionContext) {
+    this._authService = AuthService.getInstance(_context);
+  }
 
+  // init method to set up the webview
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
+    // initialize webview
     this._view = webviewView;
 
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this._extensionUri],
+      localResourceRoots: [this._context.extensionUri],
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+    // listen to messages from the webview
+    webviewView.webview.onDidReceiveMessage(
+      (message) => {
+        switch (message.type) {
+          // if the webview asks to check user auth
+          case "check-auth":
+            this.sendAuthStatus();
+            break;
+        }
+      },
+      undefined,
+      this._context.subscriptions
+    );
+  }
+
+  // send auth state to webview
+  private sendAuthStatus() {
+    if (!this._view) {
+      return;
+    }
+
+    const isAuthenticated = this._authService.isAuthenticated();
+
+    this._view.webview.postMessage({
+      type: "auth-status",
+      isAuthenticated,
+    });
   }
 
   private _getHtmlForWebview(webview: vscode.Webview): string {
     const nonce = getNonce();
 
+    const extUri = this._context.extensionUri;
     const resetStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "src", "styles/reset.css")
+      vscode.Uri.joinPath(extUri, "src", "styles/reset.css")
     );
     const vsCodeStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "src", "styles/vscode.css")
+      vscode.Uri.joinPath(extUri, "src", "styles/vscode.css")
     );
     const appStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.css")
+      vscode.Uri.joinPath(extUri, "out", "compiled/bundle.css")
     );
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.js")
+      vscode.Uri.joinPath(extUri, "out", "compiled/bundle.js")
     );
 
     return /*html*/ `<!DOCTYPE html>
