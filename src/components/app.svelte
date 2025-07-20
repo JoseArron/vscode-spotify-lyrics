@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  
+  import Loading from './loading.svelte';
+
   let isAuthenticated = false;
   let isLoading = true;
 
@@ -11,7 +12,7 @@
   const vscode = acquireVsCodeApi<State>();
 
   onMount(() => {
-    window.addEventListener('message', event => {
+    window.addEventListener('message', (event) => {
       const message = event.data;
       switch (message.type) {
         case 'auth-status':
@@ -34,14 +35,11 @@
     console.log('logout');
     vscode.postMessage({ type: 'logout' });
   }
-
 </script>
 
 <div class="container">
   {#if isLoading}
-    <div class="loading">
-      <p> Loading... </p>
-    </div>
+    <Loading message="Checking authentication..." />
   {:else if !isAuthenticated}
     <div>
       <p>Nooo, youre not authenticated yet</p>
@@ -54,4 +52,9 @@
 </div>
 
 <style>
+  .container {
+    border: red solid 1px;
+    padding: 20px;
+    text-align: center;
+  }
 </style>

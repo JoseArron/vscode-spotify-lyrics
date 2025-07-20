@@ -1,10 +1,10 @@
-import * as vscode from "vscode";
-import { registerLyricsWebview } from "./lyrics.provider";
+import * as vscode from 'vscode';
+import { registerLyricsWebview } from './lyrics.provider';
 
 const test = (context: vscode.ExtensionContext) => {
   context.subscriptions.push(
-    vscode.commands.registerCommand("spotify-lyrics.test", () => {
-      vscode.window.showInformationMessage("this is spotify lyrics test");
+    vscode.commands.registerCommand('spotify-lyrics.test', () => {
+      vscode.window.showInformationMessage('this is spotify lyrics test');
     })
   );
 };

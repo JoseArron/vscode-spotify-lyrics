@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
-import { getNonce } from "../utils/nonce";
-import { AuthService } from "../services/auth";
+import * as vscode from 'vscode';
+import { getNonce } from '../utils/nonce';
+import { AuthService } from '../services/auth';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
   const provider = new LyricsWebviewProvider(context);
@@ -14,7 +14,7 @@ export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
 };
 
 class LyricsWebviewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = "spotify-lyrics.view";
+  public static readonly viewType = 'spotify-lyrics.view';
 
   private _view?: vscode.WebviewView;
   private _authService: AuthService;
@@ -34,7 +34,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this._context.extensionUri],
+      localResourceRoots: [this._context.extensionUri]
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
@@ -44,7 +44,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
       (message) => {
         switch (message.type) {
           // if the webview asks to check user auth
-          case "check-auth":
+          case 'check-auth':
             this.sendAuthStatus();
             break;
         }
@@ -63,8 +63,8 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
     const isAuthenticated = this._authService.isAuthenticated();
 
     this._view.webview.postMessage({
-      type: "auth-status",
-      isAuthenticated,
+      type: 'auth-status',
+      isAuthenticated
     });
   }
 
@@ -73,16 +73,19 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
     const extUri = this._context.extensionUri;
     const resetStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, "src", "styles/reset.css")
+      vscode.Uri.joinPath(extUri, 'src', 'styles/reset.css')
     );
     const vsCodeStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, "src", "styles/vscode.css")
+      vscode.Uri.joinPath(extUri, 'src', 'styles/vscode.css')
+    );
+    const globalsStyleUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(extUri, 'src', 'styles/globals.css')
     );
     const appStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, "out", "compiled/bundle.css")
+      vscode.Uri.joinPath(extUri, 'out', 'compiled/bundle.css')
     );
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, "out", "compiled/bundle.js")
+      vscode.Uri.joinPath(extUri, 'out', 'compiled/bundle.js')
     );
 
     return /*html*/ `<!DOCTYPE html>
@@ -102,6 +105,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
         <link href="${resetStyleUri}" rel="stylesheet">
 				<link href="${vsCodeStyleUri}" rel="stylesheet">
+				<link href="${globalsStyleUri}" rel="stylesheet">
 				<link href="${appStyleUri}" rel="stylesheet">
         <script defer nonce="${nonce}" src="${scriptUri}"></script>
 				

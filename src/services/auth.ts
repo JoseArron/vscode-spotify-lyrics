@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 export class AuthService {
   private static instance: AuthService;
@@ -17,7 +17,7 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    console.log("Not authenticated yet");
+    console.log('Not authenticated yet');
     return false;
   }
 }
