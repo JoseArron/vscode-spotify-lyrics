@@ -38,10 +38,10 @@ class SpotifyLyricsWebview implements vscode.WebviewViewProvider {
     const nonce = getNonce();
 
     const resetStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
+      vscode.Uri.joinPath(this._extensionUri, "src", "styles/reset.css")
     );
     const vsCodeStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+      vscode.Uri.joinPath(this._extensionUri, "src", "styles/vscode.css")
     );
     const appStyleUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.css")
