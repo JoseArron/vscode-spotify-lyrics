@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { showErrorMessage, showInformationMessage } from '../info/log';
 import { CodeService } from './code';
 import type { CommandState } from '../extension/commands';
+import { getStore } from '../store/store';
 
 export class AuthService {
   private static instance: AuthService;
@@ -22,7 +23,7 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    const token = this._context.secrets.get('spotify_access_token');
+    const token = getStore(this._context).getSecret('ACCESS_TOKEN');
     return !!token;
   }
 

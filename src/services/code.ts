@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import * as vscode from 'vscode';
 import { SpotifyService } from './spotify';
+import { getStore, SECRET_KEYS } from '../store/store';
 
 // https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
 // helper class to handle spotify auth flow with pkce
@@ -30,7 +31,7 @@ export class CodeService {
     const codeVerifier = this.generateCodeVerifier();
     const codeChallenge = await this.generateCodeChallenge(codeVerifier);
 
-    await this._context.secrets.store('spotify_code_verifier', codeVerifier);
+    await getStore(this._context).storeSecret('CODE_VERIFIER', codeVerifier);
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -46,9 +47,9 @@ export class CodeService {
   }
 
   public async exchangeCodeForToken(code: string): Promise<void> {
-    const codeVerifier = await this._context.secrets.get(
-      'spotify_code_verifier'
-    );
+    const secrets = getStore(this._context);
+
+    const codeVerifier = await secrets.getSecret('CODE_VERIFIER');
 
     if (!codeVerifier) {
       throw new Error('Code verifier not found');
@@ -75,23 +76,14 @@ export class CodeService {
     const tokenData = await response.json();
 
     // store access and refresh tokens
-    await this._context.secrets.store(
-      'spotify_access_token',
-      tokenData.access_token
-    );
-    await this._context.secrets.store(
-      'spotify_refresh_token',
-      tokenData.refresh_token
-    );
+    await secrets.storeSecret('ACCESS_TOKEN', tokenData.access_token);
+    await secrets.storeSecret('REFRESH_TOKEN', tokenData.refresh_token);
 
     // store expiry time
     const expiryTime = Date.now() + tokenData.expires_in * 1000;
-    await this._context.secrets.store(
-      'spotify_token_expiry',
-      expiryTime.toString()
-    );
+    await secrets.storeSecret('TOKEN_EXPIRY', expiryTime.toString());
 
-    await this._context.secrets.delete('spotify_code_verifier');
+    await secrets.deleteSecret('CODE_VERIFIER');
   }
 
   private generateCodeVerifier(): string {
