@@ -1,6 +1,14 @@
 import * as vscode from 'vscode';
 import axios, { type AxiosInstance } from 'axios';
 import { getStore } from '../store/store';
+import { showInformationMessage } from '../info/log';
+
+export interface Track {
+  name: string;
+  artist: string;
+  album: string;
+  duration: number;
+}
 
 export class SpotifyService {
   private static instance: SpotifyService;
@@ -55,7 +63,21 @@ export class SpotifyService {
       const data = await this.makeAuthenticatedRequest<any>(
         '/me/player/currently-playing'
       );
-      return data;
+
+      const res = await axios.get('https://lrclib.net/api/get', {
+        params: {
+          track_name: data.item.name,
+          artist_name: data.item.artists[0].name,
+          album_name: data.item.album.name,
+          duration: data.item.duration_ms / 1000
+        }
+      });
+
+      if (!res.data) {
+        throw new Error('No lyrics found for the current track.');
+      }
+
+      return res.data;
     })().catch((error) => {
       throw new Error(`Failed to get current track: ${error.message}`);
     });

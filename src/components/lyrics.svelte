@@ -5,10 +5,10 @@
   import { onMount } from 'svelte';
 
   export let currentTrack: {
-    item: {
-      name: string;
-      artists: { name: string }[];
-    };
+    trackName: string;
+    artistName: string;
+    plainLyrics: string;
+    duration: number;
   } | null = null;
 
   const api = get(vsCodeApi);
@@ -31,8 +31,8 @@
 
 <div class="lyrics-container">
   {#if currentTrack}
-    <h2>{currentTrack.item.name} by {currentTrack.item.artists[0].name}</h2>
-    <!-- <p>{currentTrack.lyrics}</p> -->
+    <h2>{currentTrack.trackName} by {currentTrack.artistName}</h2>
+    <p>{currentTrack.plainLyrics}</p>
   {:else}
     <div class="no-track">
       <p>No track currently playing.</p>
