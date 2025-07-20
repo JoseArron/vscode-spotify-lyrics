@@ -1,21 +1,24 @@
-import { commands, ExtensionContext } from 'vscode';
+import { commands, type ExtensionContext } from 'vscode';
 import { COMMANDS } from '../constants';
 import { showInformationMessage } from '../info/log';
+import { AuthService } from '../services/auth';
 
 interface Command {
   command: (typeof COMMANDS)[keyof typeof COMMANDS];
-  handler: () => void;
+  handler: () => CommandState | Promise<CommandState>;
+}
+
+export interface CommandState {
+  success: boolean;
 }
 
 export const registerCommands = (context: ExtensionContext) => {
+  const authService = AuthService.getInstance(context);
+
   const commmands: Command[] = [
     {
-      command: COMMANDS.TEST,
-      handler: () => showInformationMessage('this is a test')
-    },
-    {
       command: COMMANDS.LOGIN,
-      handler: () => showInformationMessage('Logging in to Spotify...')
+      handler: () => authService.login()
     }
   ];
 

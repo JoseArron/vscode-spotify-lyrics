@@ -3,6 +3,7 @@ import { getNonce } from '../utils/nonce';
 import { AuthService } from '../services/auth';
 import { BUTTONS, COMMANDS, MESSAGES, WEBVIEW_VIEW_ID } from '../constants';
 import { showInformationMessage, showWarningMessage } from '../info/log';
+import { CommandState } from './commands';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
   const provider = new LyricsWebviewProvider(context);
@@ -43,14 +44,19 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
     // listen to messages from the webview
     webviewView.webview.onDidReceiveMessage(
-      (message) => {
+      async (message) => {
         switch (message.type) {
           // if the webview asks to check user auth
           case MESSAGES.REQ_AUTH_STATUS:
             this.sendAuthStatus();
             break;
           case MESSAGES.REQ_LOG_IN:
-            vscode.commands.executeCommand(COMMANDS.LOGIN);
+            const res = await vscode.commands.executeCommand<CommandState>(
+              COMMANDS.LOGIN
+            );
+            if (res && res.success) {
+              this.sendAuthStatus();
+            }
         }
       },
       undefined,
@@ -74,7 +80,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
   }
 
   // send auth state to webview
-  private sendAuthStatus() {
+  public sendAuthStatus() {
     if (!this._view) {
       return;
     }
