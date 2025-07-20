@@ -7,9 +7,12 @@
   export let currentTrack: {
     trackName: string;
     artistName: string;
-    plainLyrics: string;
+    syncedLyrics: string;
     duration: number;
+    progress_ms: number; // progress in milliseconds
   } | null = null;
+
+  let lyrics: string[] = [];
 
   const api = get(vsCodeApi);
 
@@ -19,6 +22,7 @@
       switch (message.type) {
         case MESSAGES.SEND_TRACK:
           currentTrack = message.track;
+          lyrics = message.track.syncedLyrics.split('\n');
           break;
       }
     });
@@ -32,7 +36,7 @@
 <div class="lyrics-container">
   {#if currentTrack}
     <h2>{currentTrack.trackName} by {currentTrack.artistName}</h2>
-    <p>{currentTrack.plainLyrics}</p>
+    <p>{currentTrack.syncedLyrics}</p>
   {:else}
     <div class="no-track">
       <p>No track currently playing.</p>
