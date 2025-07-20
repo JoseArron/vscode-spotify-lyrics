@@ -5,8 +5,9 @@ export const EXT_INFO = {
 };
 
 export const COMMANDS = {
-  TEST: 'spotify-lyrics.test'
-};
+  TEST: 'spotify-lyrics.test',
+  LOGIN: 'spotify-lyrics.login'
+} as const;
 
 export const WEBVIEW_VIEW_ID = 'spotify-lyrics.view';
 
@@ -15,8 +16,8 @@ export const MESSAGES = {
   SEND_AUTH_STATUS: 'send-auth-status',
   REQ_LOG_IN: 'request-log-in',
   REQ_LOG_OUT: 'request-log-out'
-};
+} as const;
 
 export const BUTTONS = {
   LOG_IN: 'Log in'
-};
+} as const;

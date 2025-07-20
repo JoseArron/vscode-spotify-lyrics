@@ -20,6 +20,11 @@
       {
         "command": "spotify-lyrics.test",
         "title": "Test Spotify Lyrics"
+      },
+      {
+        "command": "spotify-lyrics.login",
+        "title": "Login to Spotify",
+        "category": "Spotify Lyrics"
       }
     ],
     "viewsContainers": {

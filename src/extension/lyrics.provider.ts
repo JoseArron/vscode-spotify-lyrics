@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { getNonce } from '../utils/nonce';
 import { AuthService } from '../services/auth';
-import { BUTTONS, MESSAGES, WEBVIEW_VIEW_ID } from '../constants';
+import { BUTTONS, COMMANDS, MESSAGES, WEBVIEW_VIEW_ID } from '../constants';
 import { showInformationMessage, showWarningMessage } from '../info/log';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
@@ -65,7 +65,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
       action.then((selection) => {
         if (selection === BUTTONS.LOG_IN) {
-          showInformationMessage('Logging in to Spotify...');
+          vscode.commands.executeCommand(COMMANDS.LOGIN);
         }
       });
     }
