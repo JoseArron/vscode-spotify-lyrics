@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Loading from './loading.svelte';
+  import { MESSAGES } from '../constants';
 
   let isAuthenticated = false;
   let isLoading = true;
@@ -15,7 +16,7 @@
     window.addEventListener('message', (event) => {
       const message = event.data;
       switch (message.type) {
-        case 'auth-status':
+        case MESSAGES.SEND_AUTH_STATUS:
           isAuthenticated = message.isAuthenticated;
           isLoading = false;
           break;
@@ -23,17 +24,15 @@
     });
 
     // check if user is authenticated
-    vscode.postMessage({ type: 'check-auth' });
+    vscode.postMessage({ type: MESSAGES.REQ_AUTH_STATUS });
   });
 
   function handleSignIn() {
-    console.log('sign in');
-    vscode.postMessage({ type: 'sign-in' });
+    vscode.postMessage({ type: MESSAGES.REQ_LOG_IN });
   }
 
   function handleLogout() {
-    console.log('logout');
-    vscode.postMessage({ type: 'logout' });
+    vscode.postMessage({ type: MESSAGES.REQ_LOG_OUT });
   }
 </script>
 
