@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { getNonce } from '../utils/nonce';
 import { AuthService } from '../services/auth';
+import { BUTTONS, MESSAGES, WEBVIEW_VIEW_ID } from '../constants';
+import { showInformationMessage, showWarningMessage } from '../info/log';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
   const provider = new LyricsWebviewProvider(context);
@@ -14,7 +16,7 @@ export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
 };
 
 class LyricsWebviewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'spotify-lyrics.view';
+  public static readonly viewType = WEBVIEW_VIEW_ID;
 
   private _view?: vscode.WebviewView;
   private _authService: AuthService;
@@ -44,7 +46,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
       (message) => {
         switch (message.type) {
           // if the webview asks to check user auth
-          case 'check-auth':
+          case MESSAGES.REQ_AUTH_STATUS:
             this.sendAuthStatus();
             break;
         }
@@ -52,6 +54,21 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
       undefined,
       this._context.subscriptions
     );
+
+    const isAuthenticated = this._authService.isAuthenticated();
+
+    if (!isAuthenticated) {
+      const action = showWarningMessage(
+        'You are not authenticated. Please log in to Spotify to view lyrics.',
+        BUTTONS.LOG_IN
+      );
+
+      action.then((selection) => {
+        if (selection === BUTTONS.LOG_IN) {
+          showInformationMessage('Logging in to Spotify...');
+        }
+      });
+    }
   }
 
   // send auth state to webview
@@ -63,7 +80,7 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
     const isAuthenticated = this._authService.isAuthenticated();
 
     this._view.webview.postMessage({
-      type: 'auth-status',
+      type: MESSAGES.SEND_AUTH_STATUS,
       isAuthenticated
     });
   }
