@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { registerLyricsWebview } from "./webviews/lyrics";
+import { registerLyricsWebview } from "./lyrics.webview";
 
 const test = (context: vscode.ExtensionContext) => {
   context.subscriptions.push(

@@ -37,9 +37,23 @@ class SpotifyLyricsWebview implements vscode.WebviewViewProvider {
   private _getHtmlForWebview(webview: vscode.Webview): string {
     const nonce = getNonce();
 
-    return `<!DOCTYPE html>
+    const resetStyleUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
+    );
+    const vsCodeStyleUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+    );
+    const appStyleUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.css")
+    );
+    const scriptUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/bundle.js")
+    );
+
+    return /*html*/ `<!DOCTYPE html>
 			<html lang="en">
 			<head>
+        <title>Spotify Lyrics</title>
 				<meta charset="UTF-8">
 
 				<!--
@@ -51,10 +65,13 @@ class SpotifyLyricsWebview implements vscode.WebviewViewProvider {
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-				<title>Spotify Lyrics</title>
+        <link href="${resetStyleUri}" rel="stylesheet">
+				<link href="${vsCodeStyleUri}" rel="stylesheet">
+				<link href="${appStyleUri}" rel="stylesheet">
+        <script defer nonce="${nonce}" src="${scriptUri}"></script>
+				
 			</head>
-			<body>
-                <h1> lyrics webview </h1>
+			<body id="app">
 			</body>
 			</html>`;
   }
