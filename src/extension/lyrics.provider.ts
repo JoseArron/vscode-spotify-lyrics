@@ -49,6 +49,8 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
           case MESSAGES.REQ_AUTH_STATUS:
             this.sendAuthStatus();
             break;
+          case MESSAGES.REQ_LOG_IN:
+            vscode.commands.executeCommand(COMMANDS.LOGIN);
         }
       },
       undefined,

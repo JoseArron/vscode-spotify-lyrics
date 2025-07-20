@@ -1,16 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { get } from 'svelte/store';
+  import { vsCodeApi } from './api';
   import Loading from './loading.svelte';
+  import Unauthenticated from './unauthenticated.svelte';
   import { MESSAGES } from '../constants';
 
   let isAuthenticated = false;
   let isLoading = true;
 
-  interface State {
-    isAuthenticated: boolean;
-  }
-
-  const vscode = acquireVsCodeApi<State>();
+  const api = get(vsCodeApi);
 
   onMount(() => {
     window.addEventListener('message', (event) => {
@@ -24,15 +23,11 @@
     });
 
     // check if user is authenticated
-    vscode.postMessage({ type: MESSAGES.REQ_AUTH_STATUS });
+    api.postMessage({ type: MESSAGES.REQ_AUTH_STATUS });
   });
 
-  function handleSignIn() {
-    vscode.postMessage({ type: MESSAGES.REQ_LOG_IN });
-  }
-
   function handleLogout() {
-    vscode.postMessage({ type: MESSAGES.REQ_LOG_OUT });
+    api.postMessage({ type: MESSAGES.REQ_LOG_OUT });
   }
 </script>
 
@@ -40,9 +35,7 @@
   {#if isLoading}
     <Loading message="Checking authentication..." />
   {:else if !isAuthenticated}
-    <div>
-      <p>Nooo, youre not authenticated yet</p>
-    </div>
+    <Unauthenticated />
   {:else}
     <div>
       <p>Welcome to spotify lyrics!</p>
