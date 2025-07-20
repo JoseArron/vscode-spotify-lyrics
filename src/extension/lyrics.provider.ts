@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import { getNonce } from '../utils/nonce';
 import { AuthService } from '../services/auth';
 import { BUTTONS, COMMANDS, MESSAGES, WEBVIEW_VIEW_ID } from '../constants';
-import { showInformationMessage, showWarningMessage } from '../info/log';
+import { showWarningMessage } from '../info/log';
 import { CommandState } from './commands';
+import { SpotifyService } from '../services/spotify';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
   const provider = new LyricsWebviewProvider(context);
@@ -21,9 +22,11 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
   private _authService: AuthService;
+  private _spotifyService: SpotifyService;
 
   constructor(private readonly _context: vscode.ExtensionContext) {
     this._authService = AuthService.getInstance(_context);
+    this._spotifyService = SpotifyService.getInstance(_context);
   }
 
   // init method to set up the webview
@@ -57,13 +60,35 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
             if (res && res.success) {
               this.sendAuthStatus();
             }
+            break;
+          case MESSAGES.REQ_LOG_OUT:
+            await this._authService.logout();
+            this.sendAuthStatus();
+            break;
+          case MESSAGES.REQ_TRACK:
+            this.checkAuthentication();
+            this.sendCurrentTrack();
+            break;
         }
       },
       undefined,
       this._context.subscriptions
     );
 
-    const isAuthenticated = this._authService.isAuthenticated();
+    this.checkAuthentication();
+  }
+
+  private async sendCurrentTrack() {
+    const track = await this._spotifyService.getCurrentTrack();
+    console.log('Current track:', track);
+    this._view?.webview.postMessage({
+      type: MESSAGES.SEND_TRACK,
+      track
+    });
+  }
+
+  private async checkAuthentication() {
+    const isAuthenticated = await this._authService.isAuthenticated();
 
     if (!isAuthenticated) {
       const action = showWarningMessage(
@@ -76,16 +101,18 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
           vscode.commands.executeCommand(COMMANDS.LOGIN);
         }
       });
+
+      return;
     }
   }
 
   // send auth state to webview
-  public sendAuthStatus() {
+  public async sendAuthStatus() {
     if (!this._view) {
       return;
     }
 
-    const isAuthenticated = this._authService.isAuthenticated();
+    const isAuthenticated = await this._authService.isAuthenticated();
 
     this._view.webview.postMessage({
       type: MESSAGES.SEND_AUTH_STATUS,

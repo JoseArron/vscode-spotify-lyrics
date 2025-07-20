@@ -4,6 +4,7 @@
   import { vsCodeApi } from './api';
   import Loading from './loading.svelte';
   import Unauthenticated from './unauthenticated.svelte';
+  import Lyrics from './lyrics.svelte';
   import { MESSAGES } from '../constants';
 
   let isAuthenticated = false;
@@ -37,10 +38,9 @@
   {:else if !isAuthenticated}
     <Unauthenticated />
   {:else}
-    <div>
-      <p>Welcome to spotify lyrics!</p>
-    </div>
+    <Lyrics />
   {/if}
+  <button on:click={handleLogout} class="btn btn-secondary">Log Out</button>
 </div>
 
 <style>

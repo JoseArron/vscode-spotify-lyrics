@@ -22,9 +22,23 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  public isAuthenticated(): boolean {
-    const token = getStore(this._context).getSecret('ACCESS_TOKEN');
+  public async isAuthenticated(): Promise<boolean> {
+    const token = await getStore(this._context).getSecret('ACCESS_TOKEN');
+    console.log('Checking authentication status:', !!token);
     return !!token;
+  }
+
+  public async logout(): Promise<void> {
+    return (async () => {
+      showInformationMessage('Logging out from Spotify...');
+      await getStore(this._context).deleteSecret('ACCESS_TOKEN');
+      await getStore(this._context).deleteSecret('REFRESH_TOKEN');
+      await getStore(this._context).deleteSecret('TOKEN_EXPIRY');
+      await getStore(this._context).deleteSecret('CODE_VERIFIER');
+      showInformationMessage('Successfully logged out from Spotify!');
+    })().catch((error) => {
+      showErrorMessage(`Logout failed: ${error}`);
+    });
   }
 
   public async login(): Promise<CommandState> {

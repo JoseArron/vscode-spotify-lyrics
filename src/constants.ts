@@ -15,7 +15,9 @@ export const MESSAGES = {
   REQ_AUTH_STATUS: 'request-auth-status',
   SEND_AUTH_STATUS: 'send-auth-status',
   REQ_LOG_IN: 'request-log-in',
-  REQ_LOG_OUT: 'request-log-out'
+  REQ_LOG_OUT: 'request-log-out',
+  REQ_TRACK: 'request-current-track',
+  SEND_TRACK: 'send-current-track'
 } as const;
 
 export const BUTTONS = {
