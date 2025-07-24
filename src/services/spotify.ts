@@ -77,7 +77,7 @@ export class SpotifyService {
         throw new Error('No lyrics found for the current track.');
       }
 
-      return { progress_ms: data.progress_ms, ...res.data };
+      return { progressMs: data.progress_ms, ...res.data };
     })().catch((error) => {
       throw new Error(`Failed to get current track: ${error.message}`);
     });
