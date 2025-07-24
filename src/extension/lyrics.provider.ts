@@ -32,11 +32,6 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly _context: vscode.ExtensionContext) {
     this._authService = AuthService.getInstance(_context);
     this._spotifyService = SpotifyService.getInstance(_context);
-
-    // listen to auth status changes
-    this._authService.on(EVENTS.AUTH_STATUS_CHANGED, () => {
-      this.sendAuthStatus();
-    });
   }
 
   // init method to set up the webview
@@ -86,11 +81,16 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
       undefined,
       this._context.subscriptions
     );
+
+    // listen to auth status changes
+    this._authService.on(EVENTS.AUTH_STATUS_CHANGED, () => {
+      this.sendAuthStatus();
+    });
   }
 
   private async sendCurrentTrack() {
+    // TODO: poll for current track in an interval
     const track = await this._spotifyService.getCurrentTrack();
-    console.log('Current track:', track);
     this._view?.webview.postMessage({
       type: MESSAGES.SEND_TRACK,
       track
