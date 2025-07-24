@@ -1,7 +1,6 @@
 import { commands, type ExtensionContext } from 'vscode';
 import { COMMANDS } from '../constants';
-import { showInformationMessage } from '../info/log';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../domains/auth/auth.service';
 
 interface Command {
   command: (typeof COMMANDS)[keyof typeof COMMANDS];

@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { EventEmitter } from 'events';
-import { showErrorMessage, showInformationMessage } from '../info/log';
-import { CodeService } from './code';
-import { getStore } from '../store/store';
+import { showErrorMessage, showInformationMessage } from '../../info/log';
+import { CodeService } from './code.service';
+import { getStore } from '../../store/store';
 
 interface AuthEvents {
   authStatusChanged: () => void;

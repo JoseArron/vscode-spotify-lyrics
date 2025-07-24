@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import axios, { type AxiosInstance } from 'axios';
-import { getStore } from '../store/store';
-import { showInformationMessage } from '../info/log';
+import { getStore } from '../../store/store';
 
 export interface Track {
   name: string;

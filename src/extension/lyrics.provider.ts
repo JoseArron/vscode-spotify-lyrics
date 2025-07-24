@@ -1,6 +1,4 @@
 import * as vscode from 'vscode';
-import { getNonce } from '../utils/nonce';
-import { AuthService } from '../services/auth';
 import {
   BUTTONS,
   COMMANDS,
@@ -8,8 +6,10 @@ import {
   MESSAGES,
   WEBVIEW_VIEW_ID
 } from '../constants';
+import { AuthService } from '../domains/auth/auth.service';
+import { SpotifyService } from '../domains/spotify/spotify.service';
+import { getNonce } from '../utils/nonce';
 import { showWarningMessage } from '../info/log';
-import { SpotifyService } from '../services/spotify';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
   const provider = new LyricsWebviewProvider(context);

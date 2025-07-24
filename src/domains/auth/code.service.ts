@@ -1,7 +1,6 @@
 import * as crypto from 'crypto';
 import * as vscode from 'vscode';
-import { SpotifyService } from './spotify';
-import { getStore, SECRET_KEYS } from '../store/store';
+import { getStore } from '../../store/store';
 
 // https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
 // helper class to handle spotify auth flow with pkce
