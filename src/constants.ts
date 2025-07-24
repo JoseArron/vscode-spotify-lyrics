@@ -20,6 +20,10 @@ export const MESSAGES = {
   SEND_TRACK: 'send-current-track'
 } as const;
 
+export const EVENTS = {
+  AUTH_STATUS_CHANGED: 'authStatusChanged'
+} as const;
+
 export const BUTTONS = {
   LOG_IN: 'Log in'
 } as const;

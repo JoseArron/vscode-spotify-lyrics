@@ -5,11 +5,7 @@ import { AuthService } from '../services/auth';
 
 interface Command {
   command: (typeof COMMANDS)[keyof typeof COMMANDS];
-  handler: () => CommandState | Promise<CommandState>;
-}
-
-export interface CommandState {
-  success: boolean;
+  handler: () => void | Promise<void>;
 }
 
 export const registerCommands = (context: ExtensionContext) => {

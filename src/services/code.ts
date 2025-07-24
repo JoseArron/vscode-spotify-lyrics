@@ -86,6 +86,36 @@ export class CodeService {
     await secrets.deleteSecret('CODE_VERIFIER');
   }
 
+  public async refreshToken(): Promise<void> {
+    const secrets = getStore(this._context);
+    const refreshToken = await secrets.getSecret('REFRESH_TOKEN');
+
+    if (!refreshToken) {
+      throw new Error('No refresh token found. Please log in again.');
+    }
+
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: this.clientId
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Token refresh failed: ${response.statusText}`);
+    }
+
+    const tokenData = await response.json();
+    await secrets.storeSecret('ACCESS_TOKEN', tokenData.access_token);
+    const expiryTime = Date.now() + tokenData.expires_in * 1000;
+    await secrets.storeSecret('TOKEN_EXPIRY', expiryTime.toString());
+  }
+
   private generateCodeVerifier(): string {
     return crypto.randomBytes(32).toString('base64url');
   }

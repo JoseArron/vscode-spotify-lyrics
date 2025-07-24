@@ -1,9 +1,14 @@
 import * as vscode from 'vscode';
 import { getNonce } from '../utils/nonce';
 import { AuthService } from '../services/auth';
-import { BUTTONS, COMMANDS, MESSAGES, WEBVIEW_VIEW_ID } from '../constants';
+import {
+  BUTTONS,
+  COMMANDS,
+  EVENTS,
+  MESSAGES,
+  WEBVIEW_VIEW_ID
+} from '../constants';
 import { showWarningMessage } from '../info/log';
-import { CommandState } from './commands';
 import { SpotifyService } from '../services/spotify';
 
 export const registerLyricsWebview = (context: vscode.ExtensionContext) => {
@@ -27,6 +32,11 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly _context: vscode.ExtensionContext) {
     this._authService = AuthService.getInstance(_context);
     this._spotifyService = SpotifyService.getInstance(_context);
+
+    // listen to auth status changes
+    this._authService.on(EVENTS.AUTH_STATUS_CHANGED, () => {
+      this.sendAuthStatus();
+    });
   }
 
   // init method to set up the webview
@@ -35,35 +45,37 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
     _context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
-    // initialize webview
-    this._view = webviewView;
+    this.initWebview(webviewView);
+    this.setupListeners(webviewView);
+    // check initial auth status
+    this.checkAuthentication();
+  }
 
-    webviewView.webview.options = {
+  private initWebview(webview: vscode.WebviewView) {
+    this._view = webview;
+
+    webview.webview.options = {
       enableScripts: true,
       localResourceRoots: [this._context.extensionUri]
     };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    webview.webview.html = this._getHtmlForWebview(webview.webview);
+  }
 
-    // listen to messages from the webview
-    webviewView.webview.onDidReceiveMessage(
+  private setupListeners(webview: vscode.WebviewView) {
+    webview.webview.onDidReceiveMessage(
       async (message) => {
         switch (message.type) {
           // if the webview asks to check user auth
           case MESSAGES.REQ_AUTH_STATUS:
-            this.sendAuthStatus();
+            await this.sendAuthStatus();
             break;
+          // login from webview button
           case MESSAGES.REQ_LOG_IN:
-            const res = await vscode.commands.executeCommand<CommandState>(
-              COMMANDS.LOGIN
-            );
-            if (res && res.success) {
-              this.sendAuthStatus();
-            }
+            await vscode.commands.executeCommand(COMMANDS.LOGIN);
             break;
           case MESSAGES.REQ_LOG_OUT:
             await this._authService.logout();
-            this.sendAuthStatus();
             break;
           case MESSAGES.REQ_TRACK:
             this.checkAuthentication();
@@ -74,8 +86,6 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
       undefined,
       this._context.subscriptions
     );
-
-    this.checkAuthentication();
   }
 
   private async sendCurrentTrack() {
