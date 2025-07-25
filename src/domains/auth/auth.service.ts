@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import { showErrorMessage, showInformationMessage } from '../../info/log';
 import { CodeService } from './code.service';
 import { getStore } from '../../store/store';
+import { EVENTS } from '../../constants';
 
 interface AuthEvents {
   authStatusChanged: () => void;
@@ -26,7 +27,6 @@ export class AuthService extends EventEmitter {
   private static instance: AuthService;
   private _codeService: CodeService;
   private _context: vscode.ExtensionContext;
-  private _handlers: vscode.Disposable[] = [];
 
   private constructor(context: vscode.ExtensionContext) {
     super();
@@ -82,7 +82,7 @@ export class AuthService extends EventEmitter {
       await getStore(this._context).deleteSecret('CODE_VERIFIER');
 
       // emit auth status changed event
-      this.emit('authStatusChanged');
+      this.emit(EVENTS.AUTH_STATUS_CHANGED);
 
       showInformationMessage('Successfully logged out from Spotify!');
     })().catch((error) => {
@@ -118,7 +118,7 @@ export class AuthService extends EventEmitter {
           await this._codeService.exchangeCodeForToken(code);
 
           // emit auth status changed event
-          this.emit('authStatusChanged');
+          this.emit(EVENTS.AUTH_STATUS_CHANGED);
         }
         disposable.dispose();
       }

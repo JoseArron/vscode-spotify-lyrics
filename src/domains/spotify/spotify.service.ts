@@ -1,21 +1,18 @@
 import * as vscode from 'vscode';
 import axios, { type AxiosInstance } from 'axios';
 import { getStore } from '../../store/store';
-
-export interface Track {
-  name: string;
-  artist: string;
-  album: string;
-  duration: number;
-}
+import type { SpotifyTrack, Track } from './spotify.types';
+import { LyricsService } from './lyrics.service';
 
 export class SpotifyService {
   private static instance: SpotifyService;
   private _context: vscode.ExtensionContext;
   private _httpClient: AxiosInstance;
+  private _lyricsService: LyricsService;
 
   private constructor(context: vscode.ExtensionContext) {
     this._context = context;
+    this._lyricsService = LyricsService.getInstance(context);
     this._httpClient = axios.create({
       baseURL: 'https://api.spotify.com/v1'
     });
@@ -57,26 +54,27 @@ export class SpotifyService {
   }
 
   // get user's currently playing track
-  public async getCurrentTrack(): Promise<any> {
+  public async getCurrentTrack(): Promise<Track> {
     return (async () => {
-      const data = await this.makeAuthenticatedRequest<any>(
+      const data = await this.makeAuthenticatedRequest<SpotifyTrack>(
         '/me/player/currently-playing'
       );
 
-      const res = await axios.get('https://lrclib.net/api/get', {
-        params: {
-          track_name: data.item.name,
-          artist_name: data.item.artists[0].name,
-          album_name: data.item.album.name,
-          duration: data.item.duration_ms / 1000
-        }
+      const lyrics = await this._lyricsService.fetchSyncedLyrics({
+        trackName: data.item.name,
+        artistName: data.item.artists[0].name,
+        albumName: data.item.album.name,
+        durationMs: data.item.duration_ms
       });
 
-      if (!res.data) {
-        throw new Error('No lyrics found for the current track.');
-      }
-
-      return { progressMs: data.progress_ms, ...res.data };
+      return {
+        trackName: data.item.name,
+        artistName: data.item.artists[0].name,
+        albumName: data.item.album.name,
+        durationMs: data.item.duration_ms,
+        lyrics: lyrics,
+        progressMs: data.progress_ms
+      };
     })().catch((error) => {
       throw new Error(`Failed to get current track: ${error.message}`);
     });

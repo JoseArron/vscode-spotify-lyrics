@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import * as vscode from 'vscode';
 import { getStore } from '../../store/store';
+import { showErrorMessage, showInformationMessage } from '../../info/log';
 
 // https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
 // helper class to handle spotify auth flow with pkce
@@ -106,10 +107,14 @@ export class CodeService {
     });
 
     if (!response.ok) {
+      showErrorMessage(`${response}}`);
       throw new Error(`Token refresh failed: ${response.statusText}`);
     }
 
     const tokenData = await response.json();
+
+    showInformationMessage(`${tokenData}`);
+
     await secrets.storeSecret('ACCESS_TOKEN', tokenData.access_token);
     const expiryTime = Date.now() + tokenData.expires_in * 1000;
     await secrets.storeSecret('TOKEN_EXPIRY', expiryTime.toString());

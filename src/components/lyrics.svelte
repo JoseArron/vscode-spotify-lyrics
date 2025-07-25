@@ -3,16 +3,12 @@
   import { vsCodeApi } from './api';
   import { MESSAGES } from '../constants';
   import { onMount } from 'svelte';
+  import type { Track } from '../domains/spotify/spotify.types';
+  import type { SyncedLyrics } from '../domains/spotify/lyrics.types';
 
-  export let currentTrack: {
-    trackName: string;
-    artistName: string;
-    syncedLyrics: string;
-    duration: number;
-    progress_ms: number; // progress in milliseconds
-  } | null = null;
+  export let currentTrack: Track | null = null;
 
-  let lyrics: string[] = [];
+  let lyrics: SyncedLyrics[] = [];
 
   const api = get(vsCodeApi);
 
@@ -21,9 +17,8 @@
       const message = event.data;
       switch (message.type) {
         case MESSAGES.SEND_TRACK:
-          currentTrack = message.track;
-          lyrics = message.track.syncedLyrics.split('\n');
-          break;
+          currentTrack = message.track as Track;
+          lyrics = message.track.lyrics;
       }
     });
 
@@ -36,7 +31,7 @@
 <div class="lyrics-container">
   {#if currentTrack}
     <h2>{currentTrack.trackName} by {currentTrack.artistName}</h2>
-    <p>{currentTrack.syncedLyrics}</p>
+    <p>{currentTrack.lyrics[0].lyric}</p>
   {:else}
     <div class="no-track">
       <p>No track currently playing.</p>
