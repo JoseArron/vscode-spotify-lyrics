@@ -40,8 +40,12 @@ export class LyricsService {
 
       const res = await this._httpClient.get<LrcLibTrack>('/get', { params });
 
-      if (!res.data || !res.data.syncedLyrics) {
+      if (!res.data) {
         throw new Error('No lyrics found for the specified track.');
+      }
+
+      if (!res.data.syncedLyrics) {
+        throw new Error('No synced lyrics found for the specified track.');
       }
 
       return this.parseSyncedLyrics(res.data.syncedLyrics);
