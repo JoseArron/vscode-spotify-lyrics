@@ -4,6 +4,8 @@ import { getStore } from '../../store/store';
 import type { SpotifyTrack, Track } from './spotify.types';
 import { LyricsService } from './lyrics.service';
 
+// TODO: add support for basic playback controls (play, pause, next, previous)
+
 export class SpotifyService {
   private static instance: SpotifyService;
   private _context: vscode.ExtensionContext;

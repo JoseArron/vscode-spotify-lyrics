@@ -15,6 +15,7 @@ export const registerCommands = (context: ExtensionContext) => {
       command: COMMANDS.LOGIN,
       handler: () => authService.login()
     }
+    // TODO: add logout as a command
   ];
 
   commmands.forEach(({ command, handler }) => {

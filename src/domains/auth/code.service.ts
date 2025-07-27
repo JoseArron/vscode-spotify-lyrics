@@ -86,6 +86,7 @@ export class CodeService {
     await secrets.deleteSecret('CODE_VERIFIER');
   }
 
+  // TODO: fix - for some reason this is not working
   public async refreshToken(): Promise<void> {
     const secrets = getStore(this._context);
     const refreshToken = await secrets.getSecret('REFRESH_TOKEN');
