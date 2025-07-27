@@ -1,11 +1,7 @@
 # VSCode Spotify Lyrics
 
-Display the lyrics of the song you're currently playing on Spotify!
+A VSCode extension that displays the lyrics of your currently played song on Spotify!
 
 ## Synced Lyrics
 
 ![mockup](media/images/mockup.png)
-
-## Requirements
-
-- Windows
