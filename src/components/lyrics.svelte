@@ -104,7 +104,7 @@
   }
 
   .lyric-line {
-    font-size: 2.2rem;
+    font-size: 2rem;
     line-height: 1.8;
     font-weight: 700;
     color: #e8e8e8;

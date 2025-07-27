@@ -31,28 +31,59 @@ export class LyricsService {
     track: Omit<Track, 'lyrics' | 'progressMs'>
   ): Promise<SyncedLyrics[]> {
     try {
-      const params: GetLyricsParams = {
+      let searchResults = await this.searchLyrics({
         track_name: track.trackName,
         artist_name: track.artistName,
-        album_name: track.albumName,
-        duration: track.durationMs / 1000
-      };
+        album_name: track.albumName
+      });
 
-      const res = await this._httpClient.get<LrcLibTrack>('/get', { params });
+      if (searchResults.length === 0) {
+        searchResults = await this.searchLyrics({
+          track_name: track.trackName,
+          artist_name: track.artistName
+        });
+      }
 
-      if (!res.data) {
+      if (searchResults.length === 0) {
+        searchResults = await this.searchLyrics({
+          q: `${track.trackName} ${track.artistName}`
+        });
+      }
+
+      if (searchResults.length === 0) {
         throw new Error('No lyrics found for the specified track.');
       }
 
-      if (!res.data.syncedLyrics) {
+      // get the first track with synced lyrics
+      const trackWithSyncedLyrics = searchResults.find(
+        (result) => result.syncedLyrics && result.syncedLyrics.trim() !== ''
+      );
+
+      if (!trackWithSyncedLyrics) {
         throw new Error('No synced lyrics found for the specified track.');
       }
 
-      return this.parseSyncedLyrics(res.data.syncedLyrics);
+      return this.parseSyncedLyrics(trackWithSyncedLyrics.syncedLyrics);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to fetch lyrics: ${errorMessage}`);
+    }
+  }
+
+  private async searchLyrics(params: {
+    q?: string;
+    track_name?: string;
+    artist_name?: string;
+    album_name?: string;
+  }): Promise<LrcLibTrack[]> {
+    try {
+      const res = await this._httpClient.get<LrcLibTrack[]>('/search', {
+        params
+      });
+      return res.data || [];
+    } catch (error) {
+      return [];
     }
   }
 
