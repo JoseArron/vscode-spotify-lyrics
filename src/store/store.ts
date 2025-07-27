@@ -15,3 +15,5 @@ export const getStore = (context: vscode.ExtensionContext) => {
     deleteSecret: (key: keyof typeof SECRET_KEYS) => context.secrets.delete(key)
   };
 };
+
+// TODO: use vscode global store for current track info
