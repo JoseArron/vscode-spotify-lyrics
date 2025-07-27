@@ -135,13 +135,13 @@ class LyricsWebviewProvider implements vscode.WebviewViewProvider {
 
     const extUri = this._context.extensionUri;
     const resetStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, 'src', 'styles/reset.css')
+      vscode.Uri.joinPath(extUri, 'media', 'styles/reset.css')
     );
     const vsCodeStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, 'src', 'styles/vscode.css')
+      vscode.Uri.joinPath(extUri, 'media', 'styles/vscode.css')
     );
     const globalsStyleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(extUri, 'src', 'styles/globals.css')
+      vscode.Uri.joinPath(extUri, 'media', 'styles/globals.css')
     );
     const appStyleUri = webview.asWebviewUri(
       vscode.Uri.joinPath(extUri, 'out', 'compiled/bundle.css')

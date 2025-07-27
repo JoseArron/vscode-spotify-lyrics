@@ -4,7 +4,7 @@ Display the lyrics of the song you're currently playing on Spotify!
 
 ## Synced Lyrics
 
-![mockup](images/mockup.png)
+![mockup](media/images/mockup.png)
 
 ## Requirements
 
