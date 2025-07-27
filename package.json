@@ -6,6 +6,10 @@
   "engines": {
     "vscode": "^1.102.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JoseArron/vscode-spotify-lyrics"
+  },
   "publisher": "josearron",
   "extensionKind": [
     "ui",
@@ -15,7 +19,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -52,7 +56,7 @@
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "watch:rollup": "rollup -c --watch",
-    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production && rollup -c",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
