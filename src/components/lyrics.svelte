@@ -166,7 +166,7 @@
   .lyrics-display {
     width: 100%;
     height: 100vh;
-    background: #650000;
+    background: #1f2428;
     color: #e8e8e8;
     display: flex;
     flex-direction: column;
