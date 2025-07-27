@@ -34,7 +34,7 @@
         {
           "id": "spotify-lyrics",
           "title": "Spotify Lyrics",
-          "icon": "images/icon.svg"
+          "icon": "media/images/icon.svg"
         }
       ]
     },
@@ -44,7 +44,7 @@
           "type": "webview",
           "id": "spotify-lyrics.view",
           "name": "Now Playing",
-          "icon": "images/icon.svg",
+          "icon": "media/images/icon.svg",
           "visibility": "visible"
         }
       ]
