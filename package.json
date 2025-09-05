@@ -1,7 +1,7 @@
 {
   "name": "spotify-lyrics",
   "displayName": "Spotify Lyrics",
-  "description": "",
+  "description": "Display the lyrics of your currently played song on Spotify inside VSCode.",
   "version": "0.0.9",
   "engines": {
     "vscode": "^1.102.0"
